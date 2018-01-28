@@ -99,20 +99,25 @@ class Game {
 
         let scale = (512 / this.$octopus.height());
         let size = 512 / scale;
-        this.$octopus.css('background-size', 'auto '+(size * 2)+'px');
+        this.$octopus.css('background-size', 'auto '+(size * 5)+'px');
         this.$octopus.animateSprite({
             width: size,
             height: size,
             offsetX: 0,
             fps: 5,
-            columns: 23,
+            columns: 24,
             loop: true,
             autoplay: true,
             animations: {
-                idle_1: [23, 24, 25, 26, 27],
-                idle_2: [0, 1, 2, 3, 4, 5, 6, 7],
-                idle_3: [8, 9, 10, 11, 12, 13, 14, 15],
-                idle_4: [16, 17, 18, 19, 20, 21, 22],
+                idle_1: [24, 25, 26, 27, 28, 29],
+                idle_2: [38, 39, 40, 41],
+                idle_3: [0, 1, 2, 3, 4, 5, 6, 7],
+                idle_4: [8, 9, 10, 11, 12, 13, 14, 15],
+                idle_5: [16, 17, 18, 19, 20, 21, 22, 23],
+                idle_6: [53, 54, 55, 56],
+                idle_7: [72, 73, 74, 75, 76, 77, 76, 75, 74, 73],
+                idle_8: [87, 88, 89, 88],
+                idle_9: [103, 104, 105, 106],
             },
         });
         this.$octopus.animateSprite('play', 'idle_1');
@@ -138,7 +143,17 @@ class Game {
         this.upgrades.update();
 
         let state = 1;
-        if(this.data.highscore > 1000) {
+        if(this.data.highscore > 100000000) {
+            state = 9;
+        } else if(this.data.highscore > 10000000) {
+            state = 8;
+        } else if(this.data.highscore > 1000000) {
+            state = 7;
+        } else if(this.data.highscore > 100000) {
+            state = 6;
+        } else if(this.data.highscore > 10000) {
+            state = 5;
+        } else if(this.data.highscore > 1000) {
             state = 4;
         } else if(this.data.highscore > 100) {
             state = 3;
