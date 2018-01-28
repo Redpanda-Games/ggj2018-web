@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title>IG GGJ 2018</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/game.css" />
+</head>
+<body>
+
+<div class="container">
+    <div class="embed-responsive embed-responsive-16by9">
+        <div class="embed-responsive-item">
+            <div id="game">
+                <img src="img/game_frame.png" class="frame" />
+                <div id="left">
+                    <h2 class="title">OctoBUS</h2>
+
+                    <div class="embed-responsive embed-responsive-1by1 octopus-wrapper">
+                        <div class="embed-responsive-item">
+                            <div id="octopus"></div>
+                        </div>
+                    </div>
+
+                    <div class="stats">
+                        <h3 class="m-0">DNA: <span data-hud="credits"></span></h3>
+                        <div>
+                            <strong>PpS: <span data-hud="pps"></span></strong>
+                            /
+                            <strong>PpC: <span data-hud="ppc"></span></strong>
+                        </div>
+                        <div><strong>Highscore: <span data-hud="highscore"></span></strong></div>
+                    </div>
+                </div>
+                <div id="right">
+                    <div class="upgrades"></div>
+                    <div class="items">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="js/jquery.animateSprite.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
