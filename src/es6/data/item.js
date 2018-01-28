@@ -2,15 +2,25 @@ export default class Item {
     constructor(
         name,
         image,
+        description,
         base_price,
         base_pps,
         level = 0
     ) {
         this._name = name;
         this._image = image;
+        this._description = description;
         this._base_price = base_price;
         this._base_pps = base_pps;
         this._level = level;
+    }
+
+    get description() {
+        return this._description;
+    }
+
+    set description(value) {
+        this._description = value;
     }
 
     get name() {

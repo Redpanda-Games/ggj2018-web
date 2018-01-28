@@ -21,7 +21,7 @@ export default class HUD {
             if(typeof self.game[key] === 'function') {
                 value = self.game[key]();
             }
-            $elem.text(numeral(value).format('0a'));
+            $elem.text(numeral(value).format('0.0a'));
         });
     }
 }

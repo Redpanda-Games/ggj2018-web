@@ -217,7 +217,7 @@ class HUD {
             if(typeof self.game[key] === 'function') {
                 value = self.game[key]();
             }
-            $elem.text(numeral(value).format('0a'));
+            $elem.text(numeral(value).format('0.0a'));
         });
     }
 }
@@ -240,18 +240,21 @@ class Items {
             vacuumtube: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
                 'Vacuum Tube',
                 'vacuumtube.jpg',
+                'ä heater in a glass bulb',
                 10,
                 0.1
             ),
             transistor: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
                 'Transistor',
                 'transistor.jpg',
+                'fancy resistor the tiny transistor',
                 100,
                 1
             ),
             arduino: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
                 'Arduino',
                 'arduino.jpg',
+                'A computerr on the chip',
                 800,
                 8
             ),
@@ -259,48 +262,56 @@ class Items {
             rasberrypi: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
                 'Rasberry Pi',
                 'rasberrypi.jpg',
+                'MHM... Pie!',
                 4700,
                 47
             ),
             octopodesbrains: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
                 'Octopodes Brain',
                 'octopodesbrains.jpg',
+                'Canis canem edit',
                 26000,
                 260
             ),
             computer: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
                 'Computer',
                 'computer.jpg',
+                'The big one! or not?',
                 140000,
                 1400
             ),
             graphiccard: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
                 'Graphic Card',
                 'graphiccard.jpg',
+                'PCMR',
                 780000,
                 7800
             ),
             serverrack: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
                 'Server Rack',
                 'serverrack.jpg',
+                'computer hoarding problems',
                 4400000,
                 44000
             ),
             supercomputer: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
                 'Super Computer',
                 'supercomputer.jpg',
+                'Some assembly required',
                 26000000,
                 260000
             ),
             quantumcomputer: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
                 'Quantum Computer',
                 'quantumcomputer.jpg',
+                'Spooky computing at a distance',
                 160000000,
                 1600000
             ),
             planetarycomputer: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
                 'Planetary Computer',
                 'planetarycomputer.jpg',
+                'Yo mama so big...',
                 10000000000,
                 10000000
             ),
@@ -314,6 +325,7 @@ class Items {
                 '<div class="col-6 col-md-3"><a href="#" class="btn btn-dark disabled item d-block mb-3 p-0" data-key="'+key+'" data-toggle="tooltip" data-html="true" title="' +
                 self.buttonText(item)+
                 '">'+
+                '<span class="level">0</span>' +
                 '<img src="img/'+item.image+'" class="img-fluid" />' +
                 '</a></div>'
             );
@@ -339,6 +351,7 @@ class Items {
             let $item = $(this);
             let item = self.items[$item.data('key')];
             $item.addClass('disabled').addClass('btn-dark').removeClass('btn-success');
+            $item.find('.level').text(item.level);
             if($item.attr('data-original-title') !== self.buttonText(item)) {
                 $item.attr('data-original-title', self.buttonText(item)).tooltip('setContent');
             }
@@ -349,7 +362,12 @@ class Items {
     }
 
     buttonText(item) {
-        return '<strong>'+item.name+'</strong> #'+item.level+'<br/>costs '+numeral(item.price()).format('0a')+' DNA';
+        return '<strong style=\'font-size:1.25em;\'>'+item.name+'</strong>'+
+            '<br/>'+
+            '<em>'+item.description+'</em>'+
+            '<br/>'+
+            '<br/>'+
+            '<span style=\'font-size:1.125em;\'>'+numeral(item.price()).format('0a')+' DNA</span>';
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Items;
@@ -364,15 +382,25 @@ class Item {
     constructor(
         name,
         image,
+        description,
         base_price,
         base_pps,
         level = 0
     ) {
         this._name = name;
         this._image = image;
+        this._description = description;
         this._base_price = base_price;
         this._base_pps = base_pps;
         this._level = level;
+    }
+
+    get description() {
+        return this._description;
+    }
+
+    set description(value) {
+        this._description = value;
     }
 
     get name() {
