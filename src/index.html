@@ -15,7 +15,8 @@
 <div class="container">
     <div class="embed-responsive embed-responsive-16by9">
         <div class="embed-responsive-item">
-            <div id="game">
+            <div id="intro"></div>
+            <div id="game" class="d-none">
                 <img src="img/game_frame.png" class="frame" />
                 <div id="left">
                     <h2 class="title">DNA: <span data-hud="credits"></span></h2>
@@ -54,10 +55,49 @@
     </div>
 </div>
 
+<script src="http://www.youtube.com/player_api"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ion-sound/3.0.7/js/ion.sound.min.js"></script>
 <script src="js/jquery.animateSprite.js"></script>
 <script src="js/game.js"></script>
+<script>
+    let intro;
+    function onYouTubeIframeAPIReady() {
+        intro = new YT.Player('intro', {
+            height: '100%',
+            width: '100%',
+            videoId: 'Euzf-1nCPdw',
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
+    }
+
+    function onPlayerReady(event) {
+        event.target.playVideo();
+    }
+
+    function onPlayerStateChange(event) {
+        if(event.data === 0) {
+            $('#intro').remove();
+            $('#game').removeClass('d-none');
+            $(window).trigger('intro.finish');
+        }
+    }
+
+    ion.sound({
+        sounds: [
+            {
+                name: "theme"
+            },
+        ],
+        volume: 0.5,
+        path: "audio/",
+        preload: true
+    });
+</script>
 </body>
 </html>

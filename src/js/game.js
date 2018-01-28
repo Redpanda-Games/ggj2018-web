@@ -135,6 +135,8 @@ class Game {
             self.addCredits(self.pps());
             self.update();
         }, 1000);
+
+        ion.sound.play("theme");
     }
 
     update() {
@@ -212,7 +214,7 @@ class Game {
     }
 }
 
-$(window).on('load', function () {
+$(window).on('intro.finish', function () {
     window.game = new Game($('#game'));
     window.game.init();
 });
