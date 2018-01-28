@@ -48,6 +48,13 @@ export default class Items {
                 140000,
                 1400
             ),
+            ethernet: new Item(
+                'Ethernet',
+                'ethernet.jpg',
+                'Access the world of everything.',
+                380000,
+                3800
+            ),
             graphiccard: new Item(
                 'Graphic Card',
                 'graphiccard.jpg',
@@ -135,6 +142,6 @@ export default class Items {
             '<em>'+item.description+'</em>'+
             '<br/>'+
             '<br/>'+
-            '<span style=\'font-size:1.125em;\'>'+numeral(item.price()).format('0a')+' DNA</span>';
+            '<div class=\'clearfix\' style=\'font-size:1.125em;\'><span class=\'float-left\'>'+numeral(item.price()).format('0a')+' DNA</span><span class=\'float-right\'>'+numeral(item.pps()).format('0.0a')+' PpS</span></div>';
     }
 }

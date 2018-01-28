@@ -280,6 +280,13 @@ class Items {
                 140000,
                 1400
             ),
+            ethernet: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
+                'Ethernet',
+                'ethernet.jpg',
+                'Access the world of everything.',
+                380000,
+                3800
+            ),
             graphiccard: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
                 'Graphic Card',
                 'graphiccard.jpg',
@@ -367,7 +374,7 @@ class Items {
             '<em>'+item.description+'</em>'+
             '<br/>'+
             '<br/>'+
-            '<span style=\'font-size:1.125em;\'>'+numeral(item.price()).format('0a')+' DNA</span>';
+            '<div class=\'clearfix\' style=\'font-size:1.125em;\'><span class=\'float-left\'>'+numeral(item.price()).format('0a')+' DNA</span><span class=\'float-right\'>'+numeral(item.pps()).format('0.0a')+' PpS</span></div>';
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Items;
