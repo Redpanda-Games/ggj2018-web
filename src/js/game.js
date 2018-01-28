@@ -71,6 +71,8 @@
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_hud__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_items__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_upgrades__ = __webpack_require__(4);
+
 
 
 
@@ -92,6 +94,32 @@ class Game {
         this.hud.init();
         this.items = new __WEBPACK_IMPORTED_MODULE_1__components_items__["a" /* default */](this);
         this.items.init();
+        this.upgrades = new __WEBPACK_IMPORTED_MODULE_2__components_upgrades__["a" /* default */](this);
+        this.upgrades.init();
+
+        let scale = (512 / this.$octopus.height());
+        let size = 512 / scale;
+        this.$octopus.css('background-size', 'auto '+(size * 2)+'px');
+        this.$octopus.animateSprite({
+            width: size,
+            height: size,
+            offsetX: 0,
+            fps: 5,
+            columns: 23,
+            loop: true,
+            autoplay: true,
+            animations: {
+                idle_1: [23, 24, 25, 26, 27],
+                idle_2: [0, 1, 2, 3, 4, 5, 6, 7],
+                idle_3: [8, 9, 10, 11, 12, 13, 14, 15],
+                idle_4: [16, 17, 18, 19, 20, 21, 22],
+            },
+        });
+        this.$octopus.animateSprite('play', 'idle_1');
+
+        this.$game.tooltip({
+            selector: '[data-toggle=tooltip]'
+        });
 
         this.$octopus.on('click', function() {
             self.addCredits(self.ppc());
@@ -107,6 +135,21 @@ class Game {
     update() {
         this.hud.update();
         this.items.update();
+        this.upgrades.update();
+
+        let state = 1;
+        if(this.data.highscore > 1000) {
+            state = 4;
+        } else if(this.data.highscore > 100) {
+            state = 3;
+        } else if(this.data.highscore > 10) {
+            state = 2;
+        }
+
+        let animation = 'idle_' + state;
+        if(animation !== this.$octopus.data('animateSprite').currentAnimationName) {
+            this.$octopus.animateSprite('play', 'idle_' + state);
+        }
     }
 
     pps() {
@@ -121,7 +164,14 @@ class Game {
     }
 
     ppc() {
-        return 1;
+        if(typeof this.items !== 'object') {
+            return 1;
+        }
+        let ppc = 0;
+        $.each(this.items.items, function() {
+            ppc += this.level;
+        });
+        return Math.max(1, ppc);
     }
 
     addCredits(amount) {
@@ -167,7 +217,7 @@ class HUD {
             if(typeof self.game[key] === 'function') {
                 value = self.game[key]();
             }
-            $elem.text(value);
+            $elem.text(numeral(value).format('0a'));
         });
     }
 }
@@ -185,22 +235,74 @@ class HUD {
 class Items {
     constructor(game) {
         this.game = game;
-        this.$itemWrapper = this.game.$right.find('.items');
+        this.$itemWrapper = this.game.$right.find('.items .row');
         this.items = {
-            keyboard: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
-                'Keyboard',
-                15,
+            vacuumtube: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
+                'Vacuum Tube',
+                'vacuumtube.jpg',
+                10,
                 0.1
             ),
-            arduino: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
-                'Arduino',
+            transistor: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
+                'Transistor',
+                'transistor.jpg',
                 100,
                 1
             ),
-            raspberrypi: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
-                'Raspberry Pi',
-                1100,
+            arduino: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
+                'Arduino',
+                'arduino.jpg',
+                800,
                 8
+            ),
+
+            rasberrypi: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
+                'Rasberry Pi',
+                'rasberrypi.jpg',
+                4700,
+                47
+            ),
+            octopodesbrains: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
+                'Octopodes Brain',
+                'octopodesbrains.jpg',
+                26000,
+                260
+            ),
+            computer: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
+                'Computer',
+                'computer.jpg',
+                140000,
+                1400
+            ),
+            graphiccard: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
+                'Graphic Card',
+                'graphiccard.jpg',
+                780000,
+                7800
+            ),
+            serverrack: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
+                'Server Rack',
+                'serverrack.jpg',
+                4400000,
+                44000
+            ),
+            supercomputer: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
+                'Super Computer',
+                'supercomputer.jpg',
+                26000000,
+                260000
+            ),
+            quantumcomputer: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
+                'Quantum Computer',
+                'quantumcomputer.jpg',
+                160000000,
+                1600000
+            ),
+            planetarycomputer: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
+                'Planetary Computer',
+                'planetarycomputer.jpg',
+                10000000000,
+                10000000
             ),
         };
     }
@@ -209,9 +311,11 @@ class Items {
         let self = this;
         $.each(this.items, function(key, item) {
             self.$itemWrapper.append(
-                '<a href="#" class="btn btn-dark disabled item d-block mb-3" data-key="'+key+'">'+
-                self.itemButtonText(item)+
-                '</a>'
+                '<div class="col-6 col-md-3"><a href="#" class="btn btn-dark disabled item d-block mb-3 p-0" data-key="'+key+'" data-toggle="tooltip" data-html="true" title="' +
+                self.buttonText(item)+
+                '">'+
+                '<img src="img/'+item.image+'" class="img-fluid" />' +
+                '</a></div>'
             );
         });
 
@@ -235,16 +339,17 @@ class Items {
             let $item = $(this);
             let item = self.items[$item.data('key')];
             $item.addClass('disabled').addClass('btn-dark').removeClass('btn-success');
-            $item.text(self.itemButtonText(item));
+            if($item.attr('data-original-title') !== self.buttonText(item)) {
+                $item.attr('data-original-title', self.buttonText(item)).tooltip('setContent');
+            }
             if(item.price() <= self.game.data.credits) {
                 $item.removeClass('disabled').removeClass('btn-dark').addClass('btn-success');
             }
         });
     }
 
-    itemButtonText(item)
-    {
-        return item.name+'#'+item.level+' ('+item.price()+' DNA)';
+    buttonText(item) {
+        return '<strong>'+item.name+'</strong> #'+item.level+'<br/>costs '+numeral(item.price()).format('0a')+' DNA';
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Items;
@@ -258,11 +363,13 @@ class Items {
 class Item {
     constructor(
         name,
+        image,
         base_price,
         base_pps,
         level = 0
     ) {
         this._name = name;
+        this._image = image;
         this._base_price = base_price;
         this._base_pps = base_pps;
         this._level = level;
@@ -274,6 +381,14 @@ class Item {
 
     set name(value) {
         this._name = value;
+    }
+
+    get image() {
+        return this._image;
+    }
+
+    set image(value) {
+        this._image = value;
     }
 
     get base_price() {
@@ -305,14 +420,145 @@ class Item {
     }
 
     price() {
-        return Math.ceil(this.base_price * Math.pow(1.15, this.level))
+        return Math.ceil(this.base_price * Math.pow(1.15, this.level));
     }
 
     pps() {
-        return Math.floor((this.base_pps * this.level) * 100) / 100
+        return Math.floor((this.base_pps * this.level) * 10) / 10;
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Item;
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__data_upgrade__ = __webpack_require__(5);
+
+
+class Upgrades {
+    constructor(game) {
+        this.game = game;
+        this.$upgradeWrapper = this.game.$right.find('.upgrades');
+        this.upgrades = {
+            keyboard: new __WEBPACK_IMPORTED_MODULE_0__data_upgrade__["a" /* default */](
+                'USB3',
+                50,
+                0.1
+            ),
+        };
+    }
+
+    init() {
+        let self = this;
+        $.each(this.upgrades, function(key, upgrade) {
+            self.$upgradeWrapper.append(
+                '<a href="#" class="btn btn-dark disabled upgrade d-block mb-3" data-key="'+key+'">'+
+                self.buttonText(upgrade)+
+                '</a>'
+            );
+        });
+
+        this.$upgradeWrapper.find('.upgrade').on('click', function(e) {
+            e.preventDefault();
+            let $upgrade = $(this);
+            if(!$upgrade.hasClass('disabled')) {
+                let upgrade = self.upgrades[$upgrade.data('key')];
+                if(upgrade.price() <= self.game.data.credits) {
+                    self.game.subCredits(upgrade.price());
+                    upgrade.incLevel();
+                    self.game.update();
+                }
+            }
+        });
+    }
+
+    update() {
+        let self = this;
+        this.$upgradeWrapper.find('.upgrade').each(function() {
+            let $upgrade = $(this);
+            let upgrade = self.upgrades[$upgrade.data('key')];
+            $upgrade.addClass('disabled').addClass('btn-dark').removeClass('btn-success');
+            $upgrade.text(self.buttonText(upgrade));
+            if(upgrade.price() <= self.game.data.credits) {
+                $upgrade.removeClass('disabled').removeClass('btn-dark').addClass('btn-success');
+            }
+        });
+    }
+
+    buttonText(upgrade)
+    {
+        return upgrade.name+'#'+upgrade.level+' ('+upgrade.price()+' DNA)';
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Upgrades;
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class Upgrade {
+    constructor(
+        name,
+        base_price,
+        base_multi,
+        level = 0
+    ) {
+        this._name = name;
+        this._base_price = base_price;
+        this._base_multi = base_multi;
+        this._level = level;
+    }
+
+    get name() {
+        return this._name;
+    }
+
+    set name(value) {
+        this._name = value;
+    }
+
+    get base_price() {
+        return this._base_price;
+    }
+
+    set base_price(value) {
+        this._base_price = value;
+    }
+
+    get base_multi() {
+        return this._base_multi;
+    }
+
+    set base_multi(value) {
+        this._base_multi = value;
+    }
+
+    get level() {
+        return this._level;
+    }
+
+    set level(value) {
+        this._level = value;
+    }
+
+    incLevel(amount = 1) {
+        this._level += amount
+    }
+
+    price() {
+        return Math.ceil(this.base_price * Math.pow(1.15, this.level));
+    }
+
+    multi() {
+        return Math.floor((this.base_multi * this.level) * 10) / 10;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Upgrade;
 
 
 /***/ })

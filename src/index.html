@@ -6,6 +6,7 @@
 
     <title>IG GGJ 2018</title>
 
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Orbitron:900" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/game.css" />
 </head>
@@ -17,7 +18,7 @@
             <div id="game">
                 <img src="img/game_frame.png" class="frame" />
                 <div id="left">
-                    <h2 class="title">OctoBUS</h2>
+                    <h2 class="title">DNA: <span data-hud="credits"></span></h2>
 
                     <div class="embed-responsive embed-responsive-1by1 octopus-wrapper">
                         <div class="embed-responsive-item">
@@ -26,7 +27,6 @@
                     </div>
 
                     <div class="stats">
-                        <h3 class="m-0">DNA: <span data-hud="credits"></span></h3>
                         <div>
                             <strong>PpS: <span data-hud="pps"></span></strong>
                             /
@@ -38,6 +38,7 @@
                 <div id="right">
                     <div class="upgrades"></div>
                     <div class="items">
+                        <div class="row"></div>
                     </div>
                 </div>
             </div>
@@ -46,6 +47,8 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
 <script src="js/jquery.animateSprite.js"></script>
 <script src="js/game.js"></script>
 </body>

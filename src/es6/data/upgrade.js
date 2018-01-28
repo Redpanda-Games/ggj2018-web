@@ -1,15 +1,13 @@
-export default class Item {
+export default class Upgrade {
     constructor(
         name,
-        image,
         base_price,
-        base_pps,
+        base_multi,
         level = 0
     ) {
         this._name = name;
-        this._image = image;
         this._base_price = base_price;
-        this._base_pps = base_pps;
+        this._base_multi = base_multi;
         this._level = level;
     }
 
@@ -21,14 +19,6 @@ export default class Item {
         this._name = value;
     }
 
-    get image() {
-        return this._image;
-    }
-
-    set image(value) {
-        this._image = value;
-    }
-
     get base_price() {
         return this._base_price;
     }
@@ -37,12 +27,12 @@ export default class Item {
         this._base_price = value;
     }
 
-    get base_pps() {
-        return this._base_pps;
+    get base_multi() {
+        return this._base_multi;
     }
 
-    set base_pps(value) {
-        this._base_pps = value;
+    set base_multi(value) {
+        this._base_multi = value;
     }
 
     get level() {
@@ -61,7 +51,7 @@ export default class Item {
         return Math.ceil(this.base_price * Math.pow(1.15, this.level));
     }
 
-    pps() {
-        return Math.floor((this.base_pps * this.level) * 10) / 10;
+    multi() {
+        return Math.floor((this.base_multi * this.level) * 10) / 10;
     }
 }
