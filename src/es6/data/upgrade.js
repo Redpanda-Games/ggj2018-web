@@ -1,14 +1,16 @@
 export default class Upgrade {
     constructor(
         name,
+        image,
         base_price,
         base_multi,
-        level = 0
+        owned = false
     ) {
         this._name = name;
+        this._image = image;
         this._base_price = base_price;
         this._base_multi = base_multi;
-        this._level = level;
+        this._owned = owned;
     }
 
     get name() {
@@ -17,6 +19,14 @@ export default class Upgrade {
 
     set name(value) {
         this._name = value;
+    }
+
+    get image() {
+        return this._image;
+    }
+
+    set image(value) {
+        this._image = value;
     }
 
     get base_price() {
@@ -35,23 +45,19 @@ export default class Upgrade {
         this._base_multi = value;
     }
 
-    get level() {
-        return this._level;
+    get owned() {
+        return this._owned;
     }
 
-    set level(value) {
-        this._level = value;
-    }
-
-    incLevel(amount = 1) {
-        this._level += amount
+    set owned(value) {
+        this._owned = value;
     }
 
     price() {
-        return Math.ceil(this.base_price * Math.pow(1.15, this.level));
+        return this.owned ? 0 : this.base_price;
     }
 
     multi() {
-        return Math.floor((this.base_multi * this.level) * 10) / 10;
+        return this.owned ? this.base_multi : 0;
     }
 }

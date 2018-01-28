@@ -160,7 +160,7 @@ class Game {
         $.each(this.items.items, function() {
             pps += this.pps();
         });
-        return pps;
+        return pps * this.multi();
     }
 
     ppc() {
@@ -171,7 +171,20 @@ class Game {
         $.each(this.items.items, function() {
             ppc += this.level;
         });
-        return Math.max(1, ppc);
+        return Math.max(1, ppc * this.multi());
+    }
+
+    multi() {
+        if(typeof this.items !== 'object') {
+            return 1;
+        }
+        let multi = 1;
+        $.each(this.items.items, function(iKey, item) {
+            $.each(item.upgrades, function(uKey, upgrade) {
+                multi += upgrade.multi();
+            });
+        });
+        return multi;
     }
 
     addCredits(amount) {
@@ -230,6 +243,8 @@ class HUD {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__data_item__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__data_upgrade__ = __webpack_require__(5);
+
 
 
 class Items {
@@ -242,14 +257,20 @@ class Items {
                 'vacuumtube.jpg',
                 'ä heater in a glass bulb',
                 10,
-                0.1
+                0.1,
+                {
+                    gasfilledtubes: new __WEBPACK_IMPORTED_MODULE_1__data_upgrade__["a" /* default */]('Gas-filled tubes', 'vacuumtube.jpg', 50, 0.1),
+                }
             ),
             transistor: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
                 'Transistor',
                 'transistor.jpg',
                 'fancy resistor the tiny transistor',
                 100,
-                1
+                1,
+                {
+                    betteralloys: new __WEBPACK_IMPORTED_MODULE_1__data_upgrade__["a" /* default */]('Better Alloys', 'transistor.jpg', 500, 0.25),
+                }
             ),
             arduino: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
                 'Arduino',
@@ -271,7 +292,10 @@ class Items {
                 'octopodesbrains.jpg',
                 'Canis canem edit',
                 26000,
-                260
+                260,
+                {
+                    fishfood: new __WEBPACK_IMPORTED_MODULE_1__data_upgrade__["a" /* default */]('Fishy Food', 'octopodesbrains.jpg', 100000, 0.5),
+                }
             ),
             computer: new __WEBPACK_IMPORTED_MODULE_0__data_item__["a" /* default */](
                 'Computer',
@@ -392,6 +416,7 @@ class Item {
         description,
         base_price,
         base_pps,
+        upgrades = {},
         level = 0
     ) {
         this._name = name;
@@ -399,7 +424,16 @@ class Item {
         this._description = description;
         this._base_price = base_price;
         this._base_pps = base_pps;
+        this._upgrades = upgrades;
         this._level = level;
+    }
+
+    get upgrades() {
+        return this._upgrades;
+    }
+
+    set upgrades(value) {
+        this._upgrades = value;
     }
 
     get description() {
@@ -470,40 +504,35 @@ class Item {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__data_upgrade__ = __webpack_require__(5);
-
-
 class Upgrades {
     constructor(game) {
         this.game = game;
-        this.$upgradeWrapper = this.game.$right.find('.upgrades');
-        this.upgrades = {
-            keyboard: new __WEBPACK_IMPORTED_MODULE_0__data_upgrade__["a" /* default */](
-                'USB3',
-                50,
-                0.1
-            ),
-        };
+        this.$upgradeWrapper = this.game.$right.find('.upgrades .row');
     }
 
     init() {
         let self = this;
-        $.each(this.upgrades, function(key, upgrade) {
-            self.$upgradeWrapper.append(
-                '<a href="#" class="btn btn-dark disabled upgrade d-block mb-3" data-key="'+key+'">'+
-                self.buttonText(upgrade)+
-                '</a>'
-            );
+        $.each(this.game.items.items, function(iKey, item) {
+            $.each(item.upgrades, function(uKey, upgrade) {
+                self.$upgradeWrapper.append(
+                    '<div class="col-6 col-md-3"><a href="#" class="btn upgrade d-none mb-3 p-0 btn-dark disabled" data-ikey="'+iKey+'" data-ukey="'+uKey+'" data-toggle="tooltip" data-html="true" title="' +
+                    self.buttonText(upgrade)+
+                    '">'+
+                    '<img src="img/'+upgrade.image+'" class="img-fluid" />' +
+                    '</a></div>'
+                );
+            });
         });
 
-        this.$upgradeWrapper.find('.upgrade').on('click', function(e) {
+        this.$upgradeWrapper.on('click', '.upgrade', function(e) {
             e.preventDefault();
             let $upgrade = $(this);
             if(!$upgrade.hasClass('disabled')) {
-                let upgrade = self.upgrades[$upgrade.data('key')];
+                let item = self.game.items.items[$upgrade.data('ikey')];
+                let upgrade = item.upgrades[$upgrade.data('ukey')];
                 if(upgrade.price() <= self.game.data.credits) {
                     self.game.subCredits(upgrade.price());
-                    upgrade.incLevel();
+                    upgrade.owned = true;
                     self.game.update();
                 }
             }
@@ -514,18 +543,31 @@ class Upgrades {
         let self = this;
         this.$upgradeWrapper.find('.upgrade').each(function() {
             let $upgrade = $(this);
-            let upgrade = self.upgrades[$upgrade.data('key')];
-            $upgrade.addClass('disabled').addClass('btn-dark').removeClass('btn-success');
-            $upgrade.text(self.buttonText(upgrade));
-            if(upgrade.price() <= self.game.data.credits) {
-                $upgrade.removeClass('disabled').removeClass('btn-dark').addClass('btn-success');
+            let item = self.game.items.items[$upgrade.data('ikey')];
+            let upgrade = item.upgrades[$upgrade.data('ukey')];
+
+            $upgrade.addClass('disabled').addClass('btn-dark').addClass('d-none').removeClass('btn-success').removeClass('d-block');
+
+            if(item.level > 0) {
+                $upgrade.removeClass('d-none').addClass('d-block');
+
+                if(upgrade.owned) {
+                    $upgrade.removeClass('disabled').addClass('border-warning');
+                } else if(upgrade.price() <= self.game.data.credits) {
+                    $upgrade.removeClass('disabled').removeClass('btn-dark').addClass('btn-success');
+                }
+            }
+            if($upgrade.attr('data-original-title') !== self.buttonText(upgrade)) {
+                $upgrade.attr('data-original-title', self.buttonText(upgrade)).tooltip('setContent');
             }
         });
     }
 
-    buttonText(upgrade)
-    {
-        return upgrade.name+'#'+upgrade.level+' ('+upgrade.price()+' DNA)';
+    buttonText(upgrade) {
+        return '<strong style=\'font-size:1.25em;\'>'+upgrade.name+'</strong>'+
+            '<br/>'+
+            '<br/>'+
+            '<span style=\'font-size:1.125em;\'>'+(upgrade.owned ? 'owned' : numeral(upgrade.price()).format('0a')+' DNA')+'</span>';
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Upgrades;
@@ -539,14 +581,16 @@ class Upgrades {
 class Upgrade {
     constructor(
         name,
+        image,
         base_price,
         base_multi,
-        level = 0
+        owned = false
     ) {
         this._name = name;
+        this._image = image;
         this._base_price = base_price;
         this._base_multi = base_multi;
-        this._level = level;
+        this._owned = owned;
     }
 
     get name() {
@@ -555,6 +599,14 @@ class Upgrade {
 
     set name(value) {
         this._name = value;
+    }
+
+    get image() {
+        return this._image;
+    }
+
+    set image(value) {
+        this._image = value;
     }
 
     get base_price() {
@@ -573,24 +625,20 @@ class Upgrade {
         this._base_multi = value;
     }
 
-    get level() {
-        return this._level;
+    get owned() {
+        return this._owned;
     }
 
-    set level(value) {
-        this._level = value;
-    }
-
-    incLevel(amount = 1) {
-        this._level += amount
+    set owned(value) {
+        this._owned = value;
     }
 
     price() {
-        return Math.ceil(this.base_price * Math.pow(1.15, this.level));
+        return this.owned ? 0 : this.base_price;
     }
 
     multi() {
-        return Math.floor((this.base_multi * this.level) * 10) / 10;
+        return this.owned ? this.base_multi : 0;
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Upgrade;

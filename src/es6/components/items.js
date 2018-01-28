@@ -1,4 +1,5 @@
 import Item from "../data/item";
+import Upgrade from "../data/upgrade";
 
 export default class Items {
     constructor(game) {
@@ -10,14 +11,20 @@ export default class Items {
                 'vacuumtube.jpg',
                 'ä heater in a glass bulb',
                 10,
-                0.1
+                0.1,
+                {
+                    gasfilledtubes: new Upgrade('Gas-filled tubes', 'vacuumtube.jpg', 50, 0.1),
+                }
             ),
             transistor: new Item(
                 'Transistor',
                 'transistor.jpg',
                 'fancy resistor the tiny transistor',
                 100,
-                1
+                1,
+                {
+                    betteralloys: new Upgrade('Better Alloys', 'transistor.jpg', 500, 0.25),
+                }
             ),
             arduino: new Item(
                 'Arduino',
@@ -39,7 +46,10 @@ export default class Items {
                 'octopodesbrains.jpg',
                 'Canis canem edit',
                 26000,
-                260
+                260,
+                {
+                    fishfood: new Upgrade('Fishy Food', 'octopodesbrains.jpg', 100000, 0.5),
+                }
             ),
             computer: new Item(
                 'Computer',

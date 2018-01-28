@@ -5,6 +5,7 @@ export default class Item {
         description,
         base_price,
         base_pps,
+        upgrades = {},
         level = 0
     ) {
         this._name = name;
@@ -12,7 +13,16 @@ export default class Item {
         this._description = description;
         this._base_price = base_price;
         this._base_pps = base_pps;
+        this._upgrades = upgrades;
         this._level = level;
+    }
+
+    get upgrades() {
+        return this._upgrades;
+    }
+
+    set upgrades(value) {
+        this._upgrades = value;
     }
 
     get description() {

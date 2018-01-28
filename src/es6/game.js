@@ -86,7 +86,7 @@ class Game {
         $.each(this.items.items, function() {
             pps += this.pps();
         });
-        return pps;
+        return pps * this.multi();
     }
 
     ppc() {
@@ -97,7 +97,20 @@ class Game {
         $.each(this.items.items, function() {
             ppc += this.level;
         });
-        return Math.max(1, ppc);
+        return Math.max(1, ppc * this.multi());
+    }
+
+    multi() {
+        if(typeof this.items !== 'object') {
+            return 1;
+        }
+        let multi = 1;
+        $.each(this.items.items, function(iKey, item) {
+            $.each(item.upgrades, function(uKey, upgrade) {
+                multi += upgrade.multi();
+            });
+        });
+        return multi;
     }
 
     addCredits(amount) {

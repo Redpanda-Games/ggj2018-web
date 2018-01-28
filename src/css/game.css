@@ -76,6 +76,11 @@ body {
     overflow-y: auto;
 }
 
+#right .upgrades .upgrade {
+    position: relative;
+    overflow: hidden;
+}
+
 #right .items {
     padding: 60px 40px 45px 45px;
     text-align: center;
@@ -86,6 +91,7 @@ body {
 
 #right .items .item {
     position: relative;
+    overflow: hidden;
 }
 
 #right .items .item .level {
